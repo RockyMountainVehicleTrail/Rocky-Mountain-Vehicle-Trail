@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+
+    {% block title %}{{trail.title}}{% endblock %}
+    
+{% block head %}
+	    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+	 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+	   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+	   crossorigin=""/>
+	   
+		<!-- Make sure you put this AFTER Leaflet's CSS -->
+	 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+	   integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+	   crossorigin=""></script>
+    	{% include "cluster_head.html" %}
+
+
+{% endblock head%}
+
+
+{% block content %}
+	
+<div id="container">
+			<div id='cookie_div'></div>
+
+	<div class="row">
+		<div class="col-md-6">
+			<div id='map' style='height: 60vh;'></div>
+		</div>
+		
+		<div class="col-md-6">
+			<div id='picture_holder' ></div>
+		</div>	
+		
+	</div>
+	<div class="row">
+
+
+		<div class="col-md-6">
+			<div id="hover_info" >Hover over the graph</div>
+			<div id="plotly" style='height: 40vh;' ></div>
+		</div>
+		
+		<div class="col-md-6">
+			<h1>{{trail.title}}</h1>
+			{{trail.description}}
+			 <div id="pic_id"></div>
+		</div>
+		
+
+	</div>	
+</div>
+   
+   <script>
+	   var bb = {{trail.web_line_string.geojson | safe}};
+	   var boundsArray2 = [];
+	   for(var i=0; i<bb['coordinates'].length; i+=10){
+		   boundsArray2.push([bb['coordinates'][i][1], bb['coordinates'][i][0]])
+	   }
+		{% if trail.reduced_json_track %}
+			coords_raw = {{trail.reduced_json_track | safe}};
+		{% endif %}
+   </script>
+
+    
+    {% include "leaflet_US_setup_cookie_alt.html" %}
+    <script>
+		//Load the trail to the map
+    var trails = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry":bb,
+            "id": {{trail.pk}}
+        },]};
+		L.geoJSON(trails).addTo(map);
+    
+    </script>
+    
+    
+    
+   <script>
+	   var marker_plotly;
+	   
+		var x_time = [];
+		var y_elevation = [];
+		var lats = [];
+		var lons = [];
+		var totalDistance = []
+		for(var i=0; i<coords_raw.length; i+=2){
+			y_elevation.push(coords_raw[i]['elevation']*3.28084);
+			lats.push(coords_raw[i]['lat']);
+			lons.push(coords_raw[i]['lon']);
+			totalDistance.push(coords_raw[i]['td']);
+		}
+		
+		
+		var myPlot = document.getElementById('plotly'),
+			hoverInfo = document.getElementById('hover_info'),
+			d3 = Plotly.d3,
+			x = totalDistance,
+			y = y_elevation,
+			data = [ { x:x, y:y, type:'scatter', name:'Trial 1'} ];
+			layout = {
+				margin: {
+					l: 45,
+					r: 25,
+					b: 25,
+					t: 25,
+					pad: 5
+				  },
+				title:'Hover on Points',
+				
+			 };
+			 
+			 Plotly.plot('plotly', data, layout, {responsive: true});
+	myPlot.on('plotly_hover', function(data){
+		pointIndex = data['points'][0]['pointIndex'];
+		var infotext = data.points.map(function(d){
+		  return (d.data.name+'     : x= '+d.x.toPrecision(3)+', y= '+d.y.toPrecision(3));
+		});
+		marker_plotly = L.marker([lats[pointIndex],lons[pointIndex]]).addTo(map);
+
+		hoverInfo.innerHTML = infotext.join(' ');
+	});
+	
+	
+	 myPlot.on('plotly_unhover', function(data){
+		pointIndex = data['points'][0]['pointIndex'];
+		var infotext = data.points.map(function(d){
+		  return (d.data.name+'     : x= '+d.x.toPrecision(3)+', y= '+d.y.toPrecision(3));
+		});
+		hoverInfo.innerHTML = infotext.join(' ');
+		marker_plotly.remove()
+	});
+   </script>
+
+   	{% include "picloader.html" %}
+   <script>
+	   		var myStyle = {
+			"color": "#ff7800",
+			  "weight": 5
+		}
+	
+
+   
+   </script>
+   <script>
+		document.getElementById('picture_holder').innerHTML = "{{trail.description}}"
+   </script>
+	
+{% endblock %}

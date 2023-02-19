@@ -1,0 +1,37 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Pick Your State{% endblock %}
+ 
+{% block head %} 
+	{% include "cluster_head.html" %}
+{% endblock head%} 
+
+
+
+{% block content %}
+
+<div id='cookie_div'></div>
+
+<div id='map' style='height: 90vh;'>			</div>
+ 
+      <script>
+		  var boundsArray2 = [];
+		   boundsArray2.push([50.18717, -120.18619]);
+		   boundsArray2.push([32.42930, -111.56158]);
+   </script>
+			{% include "leaflet_US_setup_cookie_alt.html" %}
+
+    
+    <script>
+		{% for state in states %}
+			var geojsonFeature_{{state.pk}} = {{state.reduced_multi_polygon.geojson | safe}}
+			
+			L.geoJSON(geojsonFeature_{{state.pk}}).addTo(map).on('click', function(e){
+				window.open('{% url 'best_hikes_state' state.name_lower %}', "_self");
+			});
+		{% endfor %}		
+    </script>
+    
+{% endblock %}

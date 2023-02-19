@@ -1,0 +1,99 @@
+	<script>
+		var maxZoom = 16;
+		  
+		{% if state.admin == 'United States of America' %}
+			maxZoomState = 16;
+		{% endif %}
+		
+		{% if state.admin == 'Canada' %}
+			maxZoomState = 12;
+		{% endif %}
+	</script>
+	
+	
+	
+	<script>
+		
+	if (typeof(maxZoomState) == "undefined"){
+		maxZoomState = 16;
+	}
+	function loadMap(){
+		map = L.map("map").fitBounds(boundsArray2);
+		var attribution = '<a href="https://www.doi.gov">U.S. Department of the Interior</a> | <a href="https://www.usgs.gov">U.S. Geological Survey</a> | <a href="https://www.usgs.gov/laws/policies_notices.html">Policies</a> | <a href="https://open.canada.ca/en/open-government-licence-canada">Contains information licensed under the Open Government Licence – Canada.</a>';
+		var tnmBasemapViewer = L.tileLayer('http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
+			maxZoom: maxZoomState,
+			attribution: attribution
+			});
+		tnmBasemapViewer.addTo(map)
+	};
+	
+	function loadMapNoBase(){
+		map = L.map("map", {
+			maxZoom: maxZoomState
+		});
+		map.fitBounds(boundsArray2);
+		{% for state in states %}
+			var geojsonFeature_{{state.pk}} = {{state.reduced_multi_polygon.geojson | safe}}
+			L.geoJSON(geojsonFeature_{{state.pk}}).addTo(map).on('click', function(e){
+				console.log('{{state.name_en}}' + '{{state.multi_polygon.centroid.x}}');			
+			});
+			var icon_{{state.pk}} = L.divIcon({html:'{{state.name_en}}', className: 'leaflet_div', iconSize: [0, 0], 'iconAnchor': [22,0]});
+			var feat_marker_{{state.pk}} = L.marker( [{{state.multi_polygon.centroid.y}}, {{state.multi_polygon.centroid.x}}], {icon: icon_{{state.pk}} });
+			feat_marker_{{state.pk}}.addTo(map);
+		{% endfor %}
+
+	};
+	
+	</script>
+	
+	
+	<script>
+		
+		console.log('US map Setup cookie alt');
+		d = new Date()
+		d.setDate(d.getDate() + 365)
+		cookies = document.cookie.split(';');
+		var cookie_set = 0;
+		for(i=0; i< cookies.length; i++){
+			cid = cookies[i].split('=')[0].trim();
+			if (cid == 'consent_perm') {
+				cookie_set = 1;
+			} 
+
+		}
+		
+		if (cookie_set == 0){
+			loadMapNoBase();
+			mapSec = document.getElementById('cookie_div');
+			insertText = '<p>This site works better with cookies enabled.  Enabling cookies will allow a better map to load.  You can read my cookie policy here <a href="{% url "terms_cookies" %}">Cookies Policies </a> and click the button <button id="perm_button">Allow cookies</button> to allow the better map to load.</p>';
+			mapSec.innerHTML=insertText;
+		} else {
+			loadMap();
+		}
+			
+    </script>
+    
+    <script>
+    pb = $( "#perm_button" );
+    pb.click(function(){
+		console.log('click_perm');
+		d = new Date()
+		d.setDate(d.getDate() + 365)
+		document.cookie = 'consent_perm=2; expires='+d;
+		//~ loadMap();
+		window.location.reload(true);
+	});
+    </script>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

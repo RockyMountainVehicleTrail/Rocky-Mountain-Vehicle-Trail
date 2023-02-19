@@ -1,0 +1,88 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}Things to do in {{place.title}}{% endblock %}
+ 
+{% block head %} 
+	{% include "cluster_head.html" %}
+{% endblock head%} 
+
+
+
+{% block content %}
+
+
+<div id="container">
+			<div id='cookie_div'></div>
+
+	<div class="row">
+		<div class="col-md-6">
+			<div id='map' style='height: 60vh;'></div>
+			<div id="description" style="overflow-y:scroll">			{{place.description | safe}}
+</div>
+		</div>
+		
+	<div class="col-md-6">
+		<div id='picture_holder' ></div>
+			 <div id="pic_id"></div>
+		</div>
+		
+	</div>
+
+</div>
+		
+	
+    <script>
+		var place_geo = {{place.multi_polygon.envelope.geojson|safe}};
+		var boundsArray2 = []
+		for(var i=0; i < place_geo['coordinates'][0].length; i++){
+			boundsArray2.push([ place_geo['coordinates'][0][i][1],place_geo['coordinates'][0][i][0] ]);
+		}
+    </script>
+
+	{% if place.admin == 'United States of America' %}
+			{% include "leaflet_US_setup_cookie_alt.html" %}
+	{% endif %}
+	
+	{% if place.admin == 'Canada' %}
+		{% include "leaflet_canada_setup_max_zoom.html" %}
+	{% endif %}
+
+    
+
+    
+    <script>
+    {% for trail in drives %}
+		{% if trail.reduced_multi_line_string.geojson %}
+			var vtrail_{{trail.pk}} = {
+				"type": "FeatureCollection",
+				"features": [
+					{
+						"type": "Feature",
+						"geometry": {{trail.reduced_multi_line_string.geojson | safe}},
+						"id": {{trail.pk}}
+					}				
+			]};
+			var vt_{{trail.pk}} = L.geoJSON(vtrail_{{trail.pk}} ).addTo(map);
+			vt_{{trail.pk}}.on('click', function(d){					
+				window.open("{% url 'scenic_drive_name' trail.url_title %}", "_self");
+			});
+		{% endif %}
+	{% endfor %}
+    </script>
+    
+    
+    {% if trails %}
+		       {% include "hike_loader.html" %}
+
+	{% endif %}
+    {% include "feature_loader.html" %}
+
+    {% include "picloader.html" %}
+
+
+{% endblock %}

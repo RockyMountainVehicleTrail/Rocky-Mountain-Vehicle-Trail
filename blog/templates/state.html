@@ -1,0 +1,77 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}Pick Your State{% endblock %}
+ 
+{% block head %} 
+	{% include "cluster_head.html" %}
+{% endblock head%} 
+
+
+
+{% block content %}
+
+<div id='cookie_div'></div>
+
+<div id='map' style='height: 90vh;'>			</div>
+		
+	
+
+
+ broke here should not need this
+    script>
+		var map = L.map("map").setView([34.397, -98.644], 4);
+		var attribution = '<a href="https://www.doi.gov">U.S. Department of the Interior</a> | <a href="https://www.usgs.gov">U.S. Geological Survey</a> | <a href="https://www.usgs.gov/laws/policies_notices.html">Policies</a>';
+		var tnmBasemapViewer = L.tileLayer('https://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 16,
+            attribution: attribution
+            });
+      var tnmBasemapNavigator = L.tileLayer('https://navigator.er.usgs.gov/tiles/tcr.cgi/{z}/{x}/{y}.png', {
+            attribution: attribution
+            });
+            
+      var tnmImagery = L.tileLayer.wms('https://basemap.nationalmap.gov:443/arcgis/services/USGSImageryOnly/MapServer/WmsServer?', {
+            layers : "0"
+            });
+	var baseLayers = {
+        "The National Map (Viewer)" : tnmBasemapViewer,
+        "The National Map (Navigator)" : tnmBasemapNavigator,
+        "Imagery" : tnmImagery
+    };
+    var controlLayers = L.control.layers(baseLayers);
+
+    // Add the main baselayer to the map as a default (so it loads when the map
+    // is loaded
+    tnmBasemapViewer.addTo(map);
+
+    // Add the layer selector control to the map
+    controlLayers.addTo(map);
+		
+
+    </script>
+    
+    <script>
+		var markers = L.markerClusterGroup();
+		
+		{% for feature in features %}
+			var feat_marker_{{feature.pk}} = L.marker([{{feature.point.y}}, {{feature.point.x}}])
+			markers.addLayer(feat_marker_{{feature.pk}})	
+		{% endfor %}
+		map.addLayer(markers);
+			
+		
+
+		
+		
+		
+		
+    </script>
+
+
+
+    
+{% endblock %}

@@ -1,0 +1,35 @@
+	<script>
+	function loadMap(){
+		map = L.map("map").fitBounds(boundsArray2);
+		var attribution = '<a href="https://www.doi.gov">U.S. Department of the Interior</a> | <a href="https://www.usgs.gov">U.S. Geological Survey</a> | <a href="https://www.usgs.gov/laws/policies_notices.html">Policies</a> | <a href="https://open.canada.ca/en/open-government-licence-canada">Contains information licensed under the Open Government Licence – Canada.</a>';
+		var tnmBasemapViewer = L.tileLayer('http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
+			maxZoom: 16,
+			attribution: attribution
+			});
+		tnmBasemapViewer.addTo(map)
+	};
+	
+	</script>
+	
+	
+	<script>
+		console.log('US map Setup');
+		d = new Date()
+		d.setDate(d.getDate() + 365)
+		cookies = document.cookie.split(';');
+		var cookie_set = 0;
+		loadMap();
+    </script>
+    
+ 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

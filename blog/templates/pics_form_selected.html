@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+
+    {% block title %}All Pictures{% endblock %}
+    
+{% block head %}
+ 
+	 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+	   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+	   crossorigin=""/>
+	   
+		<!-- Make sure you put this AFTER Leaflet's CSS -->
+	 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+	   integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+	   crossorigin=""></script>
+
+       <link rel="stylesheet" href='{% static "css/MarkerCluster.css" %}'>
+    <link rel="stylesheet" href='{% static "css/MarkerCluster.Default.css" %}'>
+    <script src='{% static "js/leaflet.markercluster.js" %}'></script>
+
+{% endblock %}
+
+
+{% block content %}
+<div id="container">
+			
+	<div class="row">
+		<div class="col-md-6">
+				<div id='picture_holder' style='height: 60vh;' ></div>
+				<div id='form_div' style='height:20vh;' >
+					<form method="post">{% csrf_token %}
+				<p>Description {{form.description}}</p>
+				<p>id{{form.pic_id}}  rotate:{{form.rotate}} delete:{{form.delete}} <input type="submit" value="Submit"></p>
+				<p>{{form.pic_date}}</p>
+				</form>
+				
+				</div>
+<!--
+				<div id='pic_desc' style='height:10vh;'></div>
+-->
+		</div>
+
+		<div class="col-md-6">
+			<div id='map' style='height: 90vh;'>
+			</div>
+		</div>
+	</div>
+	
+</div>
+ 
+
+   
+    <script>
+		
+		var map = L.map("map").setView([{{lat}}, {{lon}}], {{zoom}});
+
+		var attribution = '<a href="https://www.doi.gov">U.S. Department of the Interior</a> | <a href="https://www.usgs.gov">U.S. Geological Survey</a> | <a href="https://www.usgs.gov/laws/policies_notices.html">Policies</a>';
+    var tnmBasemapViewer = L.tileLayer('https://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 16,
+            attribution: attribution
+            });
+      var tnmBasemapNavigator = L.tileLayer('https://navigator.er.usgs.gov/tiles/tcr.cgi/{z}/{x}/{y}.png', {
+            attribution: attribution
+            });
+            
+      var tnmImagery = L.tileLayer.wms('https://basemap.nationalmap.gov/arcgis/services/USGSImageryOnly/MapServer/WMSServer?', {
+            layers : "0"
+            });
+	var baseLayers = {
+        "The National Map (Viewer)" : tnmBasemapViewer,
+        "The National Map (Navigator)" : tnmBasemapNavigator,
+        "Imagery" : tnmImagery
+    };
+    var controlLayers = L.control.layers(baseLayers);
+
+    // Add the main baselayer to the map as a default (so it loads when the map
+    // is loaded
+    tnmBasemapViewer.addTo(map);
+
+    // Add the layer selector control to the map
+    controlLayers.addTo(map);
+
+    </script>
+    
+    <script>
+		var markers = L.markerClusterGroup();
+		
+		{% for pic in pics %}
+		{% if pic.small_picture %}
+			var marker_{{pic.pk}} = L.marker([{{pic.lat}}, {{pic.lon}}]).on('click', function(e) {
+				console.log('clicked' + {{pic.lat}} + {{pic.lon}});
+				pic_text = '<img  class="img-fluid" height="auto"  src="{{pic.small_picture.url}}"     alt="treeline_test" />	';
+				pic_id_text = 'picture id = {{pic.pk}}  lat:{{pic.lat}}, lon{{pic.lon}} filename:';
+				document.getElementById('picture_holder').innerHTML = pic_text;
+				//~ document.getElementById("pic_desc").innerHTML = pic_id_text;
+				description = '{{pic.description}}';
+				
+				if (description == 'None')
+				{
+					description = '';
+				}
+				
+				document.getElementById("id_description").value = description;
+				document.getElementById("id_pic_id").value = {{pic.pk}};
+			});
+			markers.addLayer(marker_{{pic.pk}})		
+			{% endif %}
+		{% endfor %}
+		map.addLayer(markers);
+		
+	</script>
+{% endblock %}

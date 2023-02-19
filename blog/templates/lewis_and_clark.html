@@ -1,0 +1,185 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}Lewis and Clark{% endblock %}
+ 
+{% block head %} 
+	{% include "cluster_head.html" %}
+{% endblock head%} 
+
+
+
+{% block content %}
+
+  <div id="container">
+	 <div id='cookie_div'></div>
+	 <div id="disclaimer">The data here is take from vairous sources and should help you prepare for a trip following Louis and Clark</div>
+
+	  <div>{{trail.description | safe}}  <details>
+  <summary>Citations</summary><p>The camp points in Montana were taken from <a href=" https://mslservices.mt.gov/Geographic_Information/Data/DataList/datalist_Details.aspx?did=%7B0382cc4e-e74d-4aa8-b819-ef0eda2e607b%7D">Montana Bureau of Mines and Geology</a></p><p>The text from the journals is from the <a href="https://www.gutenberg.org/files/8419/8419-h/8419-h.htm">Gutenberg Project.</a></p><p>The trail segments, Points of Interest, and Potential Historic Sites were from data from the National Park Service.</p><p>Camping icons are from <a href = "https://icons8.com/icons/set/camping">This site</a></p>
+  
+</details></div>
+	<div class="row">
+		<div class="col-md-3 overflow-auto">
+				<div id='locate_button'><button id='locate_button'>Locate ME</button></div>
+				<div id='description_holder'style='height: 70vh;' ></div>
+		</div>
+		<div class="col-md-9 col-lg-9">
+			<div id='map' style='height: 70vh;'></div>
+		</div>
+		
+				
+	</div>
+
+	
+</div>
+
+
+	<script>
+
+		var boundsArray2 = [];
+		   boundsArray2.push([50.18717, -120.18619]);
+		   boundsArray2.push([38.42930, -100.56158]);
+    </script>
+ 
+
+		{% include "leaflet_US_lewis_setup_cookie_alt.html" %}
+
+    
+    <script>
+		var segment_array = []
+		{% for segment in trail %}
+			
+			segmentType = '{{segment.trail_type}}';
+			//~ console.log(segmentType);
+			if (segmentType == 'OVERLAND'){
+					randomColor = '#000000';
+			}
+			else {
+				randomColor = '#0000ff';
+			}
+			
+			
+			    
+			var trailSegment_{{segment.pk}} = {{segment.multi_line_string.geojson | safe}}
+			var leafJSON_{{segment.pk}} =  L.geoJSON(trailSegment_{{segment.pk}},  {
+				color: randomColor,
+				trail_type: "{{segment.trail_type}",
+				journey: "{{segment.journey}}",
+				leader: "{{segment.leader}}",
+				exped_seg: "{{segment.exped_seg}}"
+				
+			})
+			segment_array.push(leafJSON_{{segment.pk}})
+			
+		{% endfor %}
+		
+		
+		var attribution = '<a href="https://www.doi.gov">U.S. Department of the Interior</a> | <a href="https://www.usgs.gov">U.S. Geological Survey</a> | <a href="https://www.usgs.gov/laws/policies_notices.html">Policies</a> | <a href="https://open.canada.ca/en/open-government-licence-canada">Contains information licensed under the Open Government Licence – Canada.</a>';
+		var tnmBasemapTopo = L.tileLayer('http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
+			maxZoom: maxZoomState,
+			attribution: attribution
+			});
+			
+			
+		var tnmBasemapSat = L.tileLayer('http://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}', {
+			maxZoom: maxZoomState,
+			attribution: attribution
+			});
+		
+		var baseLayers = {
+			"The National Map (Viewer)" : tnmBasemapTopo,
+			"Imagery" : tnmBasemapSat
+		};
+		
+		var baseLayers2 = L.layerGroup([tnmBasemapTopo, tnmBasemapSat])
+		var segmentLayer = L.layerGroup(segment_array).addTo(map)
+		
+		
+		
+		//~ POI  LAYER
+		var poi_array = [];
+		{% for poi in lc_pois %}
+		//~ console.log("{{poi.site_name | safe}}");
+		   //~ poi_{{poi.pk}} = {{poi.point.geojson | safe }};
+		   poi_array.push(L.marker([{{poi.point.y}}, {{poi.point.x}}]).on('click', function(d){
+				$('#description_holder').html('<p><a href="{{poi.url | safe}}">{{poi.site_name}} </a></p>')
+				}));
+		{% endfor %}
+		var poiLayer = L.layerGroup(poi_array);
+		
+		
+		
+		
+		//~ CAMP LAYER
+		var myIcon = L.icon({
+			iconUrl:  "{% static 'img/icons8-camping-48.png' %}",
+			iconSize: [28, 28],
+			iconAnchor: [2, 4]
+		});
+		campArray = [];
+		{% for camp in lc_camps %}
+			campArray.push(L.marker([{{camp.point.y}}, {{camp.point.x}}], {'icon':myIcon}).on('click', function(d){
+				$('#description_holder').html("<p><a href='https://www.google.com/maps/place/{{camp.point.y}},{{camp.point.x}}' target='_blank'>Go to {{camp.label}}</a></p> <p><a href='geo:{{camp.point.y}},{{camp.point.x}}'>Mobile   {{camp.point.y}},{{camp.point.x}}</a></p>   <p>{{camp.camp_text | safe}}</p>")
+				}));
+		{% endfor %}
+		var campLayer = L.layerGroup(campArray).addTo(map);
+		
+		
+		
+		//~ POTENTIAL HISTORIC SITE LAYER
+		potSiteArray = [];
+		
+		{% for pot_site in lc_pot_sites %}
+			var potIcon = L.icon({
+				iconUrl:  "{{pot_site.lecl_thumb}}",
+				iconSize: [28, 28],
+				iconAnchor: [2, 4]
+			});
+			
+			potSiteArray.push(L.marker([{{pot_site.point.y}}, {{pot_site.point.x}}], {'icon':potIcon}).on('click', function(d){
+				$('#description_holder').html('<p><img src="{{pot_site.lecl_photo}}" width="300" height="200"></p><p><a href="{{pot_site.lecl_url | safe}}">{{pot_site.name}} </a></p>')
+				}));
+		{% endfor %}
+		var potSiteLayer = L.layerGroup(potSiteArray);
+		
+		
+		
+		var baseMaps = {
+			'The National Map':baseLayers
+		}
+		
+		var featureMaps = {
+			'Trip segments':segmentLayer,
+			'Visitor Centers and Museums':poiLayer,
+			'Lewic and Clark Camp Points':campLayer,
+			'Potential Historic Sites': potSiteLayer
+		};
+		
+		L.control.layers(baseLayers, featureMaps).addTo(map);
+		
+		
+		var locMarker = L.marker();
+		
+		$('#locate_button').click(function(){
+			locMarker.removeFrom(map);
+			function success(position){
+				//~ console.log(position);
+				locMarker = L.marker([position["coords"]["latitude"], position["coords"]["longitude"]]).addTo(map)
+			};
+			navigator.geolocation.getCurrentPosition(success)
+		});
+		
+		
+		
+		
+
+		
+    </script>
+
+    
+{% endblock %}

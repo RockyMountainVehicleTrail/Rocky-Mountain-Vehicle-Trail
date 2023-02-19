@@ -1,0 +1,65 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}{{state.name_en}}{% endblock %}
+ 
+{% block head %} 
+	{% include "cluster_head.html" %}
+{% endblock head%} 
+
+
+
+{% block content %}
+
+
+<div id='map' style='height: 90vh;'>			</div>
+		
+  <script>
+		  var boundsArray2 = [];
+		   boundsArray2.push([50.18717, -120.18619]);
+		   boundsArray2.push([32.42930, -111.56158]);
+   </script>
+			{% include "leaflet_US_setup_cookie_alt.html" %}
+
+
+	
+   
+    
+    <script>var myStyle = {
+    "color": "#ff7800",
+    "weight": 5,
+    "opacity": 0.65
+};
+    {% for trail in hist_trails %}
+    console.log('{{trail.title}}');
+			{% if trail.multi_line_string.geojson %}
+				var vtrail_{{trail.pk}} = {
+					"type": "FeatureCollection",
+					"style" :{},
+					"features": [
+						{
+							"type": "Feature",
+							"geometry": {{trail.multi_line_string.geojson | safe}},
+							"id": {{trail.pk}}
+						}
+						]
+					
+				
+				};
+				var vt_{{trail.pk}} = L.geoJSON(vtrail_{{trail.pk}},  {style:{"color":"#ff7800"}}).addTo(map);
+				vt_{{trail.pk}}.on('click', function(d){					
+					window.open("{% url 'historic_trail_name' trail.url_title %}", "_self");
+				});
+				
+			{% endif %}
+	{% endfor %}
+    
+    </script>
+    
+
+
+{% endblock %}

@@ -1,0 +1,110 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}{{scenic_drive.title}}{% endblock %}
+ 
+{% block head %} 
+	{% include "cluster_head.html" %}
+{% endblock head%} 
+
+
+
+{% block content %}
+
+  <div id="container">
+	  <div id='cookie_div'></div>
+
+	<div class="row">
+		<div class="col-md-6">
+			<div id='map' style='height: 60vh;'></div>
+		</div>
+		
+		<div class="col-md-6">
+			<div id='picture_holder' ></div>
+		</div>	
+		
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+				<div id='description_holder'style='height: 30vh;' >
+					<h1>{{scenic_drive.title}}</h1>
+					{{scenic_drive.description | safe}}</div>
+		</div>
+
+		<div class="col-md-6">
+		</div>
+		
+	</div>
+	
+</div>
+
+
+	<script>
+		var bounds_geo = {{scenic_drive.multi_line_string.envelope.geojson|safe}};
+		var boundsArray2 = []
+		for(var i=0; i < bounds_geo['coordinates'][0].length; i++){
+			boundsArray2.push([ bounds_geo['coordinates'][0][i][1],bounds_geo['coordinates'][0][i][0] ]);
+		}
+    </script>
+    
+    {% include "leaflet_US_setup_cookie_alt.html" %}
+
+    
+    <script>
+		var sd_lines = [];
+		
+		sd_lines.push({{scenic_drive.multi_line_string.geojson | safe}});
+		var myStyle = {
+			"color": "#ff7800",
+			"weight": 5,
+			"opacity": 0.65
+		};
+		
+		L.geoJSON(sd_lines, {
+			style: myStyle
+		}).addTo(map);
+			
+		
+		{% for trail in trails %}
+			{% if trail.multi_line_string.geojson %}
+				var vtrail_{{trail.pk}} = {
+					"type": "FeatureCollection",
+					"features": [
+					
+						{
+							"type": "Feature",
+							"geometry": {{trail.multi_line_string.geojson | safe}},
+							"id": {{trail.pk}}
+						}
+				
+				]};
+				var vt_{{trail.pk}} = L.geoJSON(vtrail_{{trail.pk}}).addTo(map);
+				
+				vt_{{trail.pk}}.on('click', function(d){
+					
+					window.open('{% url 'trail_with_graph_vector_leaflet_base' trail.pk %}');
+				});
+			{% endif %}
+		{% endfor %}
+		
+		
+		
+    </script>
+{% include "feature_loader.html" %}
+{% include "picloader.html" %}
+	<script>
+		
+
+		var overlayMaps = {
+			"Features": feat_markers_group,
+			"Pictures": markers
+		};
+		//~ var cities = L.layerGroup([littleton, denver, aurora, golden]);
+		L.control.layers(['overlayMaps']).addTo(map);
+	</script>
+    
+{% endblock %}

@@ -1,0 +1,807 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}Learn a Latin{% endblock %}
+ 
+{% block head %} 
+{% endblock head%} 
+
+
+
+{% block content %}
+
+  {% for verb in verb_list %}
+		<a href="/verb_game/{{verb}}.html">{{verb}}</a>
+	{% endfor %}
+    
+  <p>Click on the the conjugated word to flip and see the answer. You can also click on the tense to flip the whole row.</p>  
+    <div>
+		<h1>Indicative</h1>
+    <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Click on the tense to flip the row.</th>
+      <th scope="col">Yo I</th>
+      <th scope="col">Tu You</th>
+      <th scope="col">el/ella he/she/it</th>
+      <th scope="col">Nosotros we</th>
+      <th scope="col">Vosotros yall</th>
+      <th scope="col">ellos/ellas they</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row"><button id="present_indicative_button">Present</button><button id="present_indicative_reset_button">Reset</button></th>
+      <td>
+		  <div id="card_indicative_present_1s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.presia1s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_indicative_present_2s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.presia2s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_indicative_present_3s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.presia3s}}
+		  </div> 
+		</div>
+      </td>
+      <td>
+		  <div id="card_indicative_present_1p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.presia1p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_indicative_present_2p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.presia2p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_indicative_present_3p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.presia3p}}
+		  </div> 
+		</div>
+      </td>
+      
+    </tr>
+    
+    
+    
+    
+<!--
+    Preterite
+-->
+        <tr>
+      <th scope="row"><button id="preterite_indicative_button">Preterite</button><button id="preterite_indicative_reset_button">Reset</button></th>
+      <td>
+		  <div id="card_indicative_preterite_1s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.pretia1s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_indicative_preterite_2s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.pretia2s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_indicative_preterite_3s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.pretia3s}}
+		  </div> 
+		</div>
+      </td>
+      <td>
+		  <div id="card_indicative_preterite_1p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.pretia1p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_indicative_preterite_2p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.pretia2p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_indicative_preterite_3p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.pretia3p}}
+		  </div> 
+		</div>
+      </td>
+      
+    </tr>
+    
+    
+    
+    
+    
+<!--
+   Future
+-->
+        <tr>
+      <th scope="row"><button id="future_indicative_button">Future</button><button id="future_indicative_reset_button">Reset</button></th>
+      <td>
+		  <div id="card_indicative_future_1s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.futuia1s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_indicative_future_2s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.futuia2s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_indicative_future_3s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.futuia3s}}
+		  </div> 
+		</div>
+      </td>
+      <td>
+		  <div id="card_indicative_future_1p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.futuia1p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_indicative_future_2p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.futuia2p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_indicative_future_3p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.futuia3p}}
+		  </div> 
+		</div>
+      </td>
+      
+    </tr>    
+    
+    
+    
+<!--
+   Imperfect
+-->
+        <tr>
+      <th scope="row"><button id="imperfect_indicative_button">Imperfect</button><button id="imperfect_indicative_reset_button">Reset</button></th>
+      <td>
+		  <div id="card_ind_imperfect_1s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impeia1s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_ind_imperfect_2s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impeia2s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_ind_imperfect_3s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impeia3s}}
+		  </div> 
+		</div>
+      </td>
+      <td>
+		  <div id="card_ind_imperfect_1p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impeia1p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_ind_imperfect_2p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impeia2p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_ind_imperfect_3p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impeia3p}}
+		  </div> 
+		</div>
+      </td>
+      
+    </tr>    
+
+
+
+
+<!--
+   Conditional
+-->
+        <tr>
+      <th scope="row"><button id="conditional_indicative_button">Conditional</button><button id="conditional_indicative_reset_button">Reset</button></th>
+      <td>
+		  <div id="card_ind_conditional_1s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.condia1s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_ind_conditional_2s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.condia2s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_ind_conditional_3s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.condia3s}}
+		  </div> 
+		</div>
+      </td>
+      <td>
+		  <div id="card_ind_conditional_1p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.condia1p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_ind_conditional_2p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.condia2p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_ind_conditional_3p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.condia3p}}
+		  </div> 
+		</div>
+      </td>
+      
+    </tr>    
+    
+
+  </tbody>
+</table>
+    </div>
+    
+    
+    
+    
+    
+ <h1>Subjunctive</h1>
+    <table class="table">
+  <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Yo I</th>
+      <th scope="col">Tu You</th>
+      <th scope="col">el/ella he/she/it</th>
+      <th scope="col">Nosotros we</th>
+      <th scope="col">Vosotros yall</th>
+      <th scope="col">ellos/ellas they</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row"><button id="present_subjunctive_button">Present</button><button id="present_subjunctive_reset_button">Reset</button></th>
+      <td>
+		  <div id="card_subjunctive_present_1s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.pressa1s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_present_2s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.pressa2s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_present_3s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.pressa3s}}
+		  </div> 
+		</div>
+      </td>
+      <td>
+		  <div id="card_subjunctive_present_1p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.pressa1p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_present_2p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.pressa2p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_present_3p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.pressa3p}}
+		  </div> 
+		</div>
+      </td>
+      
+    </tr>
+    
+    
+    
+    
+    
+<!--
+		subjunctive Imperfect ra
+-->
+        <tr>
+      <th scope="row"><button id="imperfect_subjunctive_ra_button">Imperfect RA</button><button id="imperfect_subjunctive_ra_reset_button">Reset</button></th>
+      <td>
+		  <div id="card_subjunctive_imperfect_ra_1s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impesa1s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_imperfect_ra_2s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impesa2s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_imperfect_ra_3s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impesa3s}}
+		  </div> 
+		</div>
+      </td>
+      <td>
+		  <div id="card_subjunctive_imperfect_ra_1p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impesa1p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_imperfect_ra_2p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impesa2p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_imperfect_ra_3p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impesa3p}}
+		  </div> 
+		</div>
+      </td>
+      
+    </tr>
+    
+    
+    
+<!--
+		subjunctive Imperfect se
+-->
+        <tr>
+      <th scope="row"><button id="imperfect_subjunctive_se_button">Imperfect SE</button><button id="imperfect_subjunctive_se_reset_button">Reset</button></th>
+      <td>
+		  <div id="card_subjunctive_imperfect_se_1s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impess1s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_imperfect_se_2s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impess2s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_imperfect_se_3s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impess3s}}
+		  </div> 
+		</div>
+      </td>
+      <td>
+		  <div id="card_subjunctive_imperfect_se_1p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impess1p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_imperfect_se_2p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impess2p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_imperfect_se_3p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.impess3p}}
+		  </div> 
+		</div>
+      </td>
+      
+    </tr>    
+    
+    
+ 
+ 
+<!--
+ Future subjunctive   
+-->
+    <tr>
+      <th scope="row"><button id="future_subjunctive_button">Future</button><button id="future_subjunctive_reset_button">Reset</button></th>
+      <td>
+		  <div id="card_subjunctive_future_1s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.futusa1s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_future_2s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.futusa2s}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_future_3s"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.futusa3s}}
+		  </div> 
+		</div>
+      </td>
+      <td>
+		  <div id="card_subjunctive_future_1p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.futusa1p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_future_2p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.futusa2p}}
+		  </div> 
+		</div>
+	  </td>
+	  
+      <td>
+		  <div id="card_subjunctive_future_3p"> 
+		  <div class="front"> 
+			{{word.word}}
+		  </div> 
+		  <div class="back">
+			{{morph_dict.futusa3p}}
+		  </div> 
+		</div>
+      </td>
+      
+    </tr>
+    
+    
+    
+    
+    
+    
+    
+    
+    </tbody>
+    </table>
+    </div>
+
+<script>
+$("div[id^='card']").flip()
+
+$("#present_indicative_button").click(function(){
+		$("div[id^='card_indicative_present']").flip(true)
+	});
+	
+$("#present_indicative_reset_button").click(function(){
+		$("div[id^='card_indicative_present']").flip(false)
+	});
+$("#preterite_indicative_button").click(function(){
+		$("div[id^='card_indicative_preterite']").flip(true)
+	});
+	
+$("#preterite_indicative_reset_button").click(function(){
+		$("div[id^='card_indicative_preterite']").flip(false)
+	});
+$("#future_indicative_button").click(function(){
+		$("div[id^='card_indicative_future']").flip(true)
+	});
+	
+$("#future_indicative_reset_button").click(function(){
+		$("div[id^='card_indicative_future']").flip(false)
+	});
+$("#imperfect_indicative_button").click(function(){
+		$("div[id^='card_ind_imperfect']").flip(true)
+	});
+	
+$("#imperfect_indicative_reset_button").click(function(){
+		$("div[id^='card_ind_imperfect']").flip(false)
+	});
+	
+$("#conditional_indicative_button").click(function(){
+		$("div[id^='card_ind_conditional']").flip(true)
+	});
+	
+$("#conditional_indicative_reset_button").click(function(){
+		$("div[id^='card_ind_conditional']").flip(false)
+	});
+	
+$("#present_subjunctive_button").click(function(){
+		$("div[id^='card_subjunctive_present']").flip(true)
+	});
+	
+$("#present_subjunctive_reset_button").click(function(){
+		$("div[id^='card_subjunctive_present']").flip(false)
+	});
+	
+$("#imperfect_subjunctive_ra_button").click(function(){
+		$("div[id^='card_subjunctive_imperfect_ra_']").flip(true)
+	});
+	
+$("#imperfect_subjunctive_ra_reset_button").click(function(){
+		$("div[id^='card_subjunctive_imperfect_ra_']").flip(false)
+	});
+
+$("#imperfect_subjunctive_se_button").click(function(){
+		$("div[id^='card_subjunctive_imperfect_se_']").flip(true)
+	});
+	
+$("#imperfect_subjunctive_se_reset_button").click(function(){
+		$("div[id^='card_subjunctive_imperfect_se_']").flip(false)
+	});
+$("#future_subjunctive_button").click(function(){
+		$("div[id^='card_subjunctive_future']").flip(true)
+	});
+	
+$("#future_subjunctive_reset_button").click(function(){
+		$("div[id^='card_subjunctive_future']").flip(false)
+	});	
+	
+	
+</script>    
+{% endblock %}

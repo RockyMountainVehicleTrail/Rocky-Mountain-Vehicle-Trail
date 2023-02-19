@@ -1,0 +1,29 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}Historic Trails{% endblock %}
+ 
+{% block head %} 
+	{% include "cluster_head.html" %}
+{% endblock head%} 
+
+
+
+{% block content %}
+
+	<ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+		{% for trail in hist_trails %}
+            <li class="nav-item active">
+				<a href="{% url 'historic_trail_name' trail.url_title %}">{{trail.title}}</a>
+            </li>
+		{% endfor %}
+	</ul>
+ 
+    
+
+
+{% endblock %}

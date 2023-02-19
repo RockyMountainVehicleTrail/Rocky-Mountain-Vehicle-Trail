@@ -1,0 +1,70 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}Best Hikes {{state.name_en}}{% endblock %}
+ 
+{% block head %} 
+
+	{% include "cluster_head.html" %}
+{% endblock head%} 
+
+
+
+{% block content %}
+
+<div id='cookie_div'></div>
+	<div class="row">
+		<div class="col-md-6 col-lg-12">
+			<div id='map' style='height: 80vh;'></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<div id='main_text' >
+								
+			<div>
+				<h2>Hikes in {{state.name_en}}</h2>
+				<ul>
+					{% for trail in trails %}
+							<li><h1><a href = "{% url 'trail_name' trail.url_title %}">{{trail.title}}</a></h1>{{trail.description | safe}}</li>
+					{% endfor %}
+				</ul>
+			</div>
+			
+			</div>
+		</div>	
+		
+	</div>
+		
+	
+    <script>
+		var state_geo = {{state.multi_polygon.envelope.geojson|safe}};
+		var boundsArray2 = []
+		for(var i=0; i < state_geo['coordinates'][0].length; i++){
+			boundsArray2.push([ state_geo['coordinates'][0][i][1],state_geo['coordinates'][0][i][0] ]);
+		}
+		var map;
+    </script>
+
+ 
+			{% include "leaflet_US_setup_cookie_alt.html" %}
+
+    
+    <script>
+		
+		{% for feature in features %}
+			var icon_{{feature.pk}} = L.divIcon({html:'{{feature.get_name}}'});
+			var feat_marker_{{feature.pk}} = L.marker( [{{feature.point.y}}, {{feature.point.x}}], {icon: icon_{{feature.pk}} }).bindPopup("{{feature.description | safe}}").addTo(map)
+		{% endfor %}
+		
+    </script>
+    
+    
+    
+   {% include "hike_loader.html" %}
+
+{% endblock %}

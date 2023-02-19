@@ -1,0 +1,124 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}{{scenic_drive.title}}{% endblock %}
+ 
+{% block head %} 
+	{% include "cluster_head.html" %}
+{% endblock head%} 
+
+
+
+{% block content %}
+
+  <div id="container">
+	 <div id='cookie_div'></div>
+
+	  <div>{{trail.description | safe}}  <details>
+  <summary>Citations</summary>{{trail.citation | safe}}
+  
+</details></div>
+	<div class="row">
+		<div class="col-md-6 col-lg-6">
+			<div id='map' style='height: 60vh;'></div>	
+		</div>
+		<div class="col-md-6 col-lg-6">
+			<div id='picture_holder' style='height: 60vh;'></div>
+		</div>
+		
+				
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<div id='description_holder'style='height: 30vh;' >
+			{% for feature in trail_points %}
+			<h1>{{feature.historic_trail.title}} {{feature.date}}</h1>{{feature.description}}
+			
+			{% endfor %}
+			</div>
+		</div>
+
+		
+		
+	</div>
+	
+</div>
+
+
+	<script>
+		var bounds_geo = {{trail.multi_line_string.envelope.geojson|safe}};
+		var boundsArray2 = []
+		for(var i=0; i < bounds_geo['coordinates'][0].length; i++){
+			boundsArray2.push([ bounds_geo['coordinates'][0][i][1],bounds_geo['coordinates'][0][i][0] ]);
+		}
+    </script>
+ 
+
+		{% include "leaflet_US_setup_cookie_alt.html" %}
+
+    
+    <script>
+		function onEachFeature(feature, layer) {
+			
+		}
+		var sd_lines = [];
+		
+		
+		sd_lines.push({{trail.multi_line_string.geojson | safe}});
+		var myStyle = {
+			"color": "#ff7800",
+			"weight": 5,
+			"opacity": 0.65
+		};
+		
+		L.geoJSON(sd_lines, {
+			style: myStyle
+		}).addTo(map);
+			
+		
+
+		var feat_markers_group = L.markerClusterGroup();
+		console.log('featload');
+		{% for feature in trail_points %}
+		
+			{% if feature.date %}
+				dateText = '{{feature.date}}';
+			{% else %}
+				dateText = '';
+			{% endif %}
+			
+			{% if feature.link %}
+				var feat_marker_{{feature.pk}} = L.marker( [{{feature.point.y}}, {{feature.point.x}}]).bindPopup(dateText + ` {{feature.description|safe}} from <a href = "{{feature.link}}" target='_blank'>HMBD</a>`)
+			{% else %}
+				var feat_marker_{{feature.pk}} = L.marker( [{{feature.point.y}}, {{feature.point.x}}]).bindPopup(dateText + ` <p>From {{ feature.citation }}</p>`)
+			{% endif %}
+				
+			feat_markers_group.addLayer(feat_marker_{{feature.pk}});
+			
+			{% if feature.link %}
+				feat_marker_{{feature.pk}}.on('click', function(d){
+					dh = document.getElementById('description_holder')
+					dh.innerHTML = dateText + ` {{feature.description|safe}} from <a href = "{{feature.link}}" target='_blank'>{{feature.citation}}</a>` + `<p><a href='https://www.google.com/maps/place/{{feature.point.y}},{{feature.point.x}}' target='_blank'>Go to {{feature.label}}</a></p> <p><a href='geo:{{feature.point.y}},{{feature.point.x}}'>Mobile   {{feature.point.y}},{{feature.point.x}}</a></p>   <p>{{feature.title | safe}}</p>`
+				});
+			{% else %}
+				feat_marker_{{feature.pk}}.on('click', function(d){
+				dh = document.getElementById('description_holder')
+				dh.innerHTML = dateText + ` {{feature.description|safe}} <p>From {{feature.citation}}</p>` + `<p><a href='https://www.google.com/maps/place/{{feature.point.y}},{{feature.point.x}}' target='_blank'>Go to {{feature.label}}</a></p> <p><a href='geo:{{feature.point.y}},{{feature.point.x}}'>Mobile   {{feature.point.y}},{{feature.point.x}}</a></p>   <p>{{feature.title | safe}}</p>`
+				});
+			{% endif %}
+		{% endfor %}
+		map.addLayer(feat_markers_group);	
+		
+		
+		
+    </script>
+{% include "feature_loader.html" %}
+
+{% include "picloader.html" %}
+
+    
+{% endblock %}

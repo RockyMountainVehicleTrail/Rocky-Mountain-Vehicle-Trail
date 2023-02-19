@@ -1,0 +1,32 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}Learn a Latin{% endblock %}
+ 
+{% block head %} 
+{% endblock head%} 
+
+
+
+{% block content %}
+<ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+{% for page in pages %}
+
+          
+            <li class="nav-item active">
+				<a href="/latin/{{page.url_title}}_1.html">{{page.title}}</a> 
+			</li>
+			
+{% endfor %}
+    </ul>
+    
+    <div>
+    <p>I learned most Latin through Linneys Latin Course.  If you are learning through the same course the information is based on the book.  If you are now following the course I think the sheets could be of use to you as well.</p>
+    <p><a href = "/files/LatinSheet_Nouns_Pronouns_Passive.pdf">Latin Cheat Sheet Nouns and Pronouns</a></p>
+    <p><a href = "/files/LatinSheet_Verbs.pdf">Latin Cheat Sheet Verbs</a></p>
+    </div>
+{% endblock %}

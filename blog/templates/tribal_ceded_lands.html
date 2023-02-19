@@ -1,0 +1,126 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}{{scenic_drive.title}}{% endblock %}
+ 
+{% block head %} 
+	{% include "cluster_head.html" %}
+{% endblock head%} 
+
+
+
+{% block content %}
+
+  <div id="container">
+	 <div id='cookie_div'></div>
+	 <div id="disclaimer">This page was taken from a dataset supplied by the Federal Government.  It provides rough outlines of Native Lands ceded to the federal goverment by various tribes in the US at various times.  The information contained is incomplete.  It is also somewhat dated in the sense that a lot has happended in the 100 or more years since the data was compiled and the treaties signed.  It is far beyond the scope of the website and my sholarly abilities to make a detailed history of every tribe.  The data is still important as the treaties and boundaries are still being litigated today.  If you are at all interested in the history of Native Americans, I think this page and the history of how they lost their land, I think this page will prove useful.  I am only publishing the portions that I have been to and have been interested in.</div>
+
+	  <div>{{trail.description | safe}}  <details>
+  <summary>Citations</summary>{{trail.citation | safe}}
+  
+</details></div>
+	<div class="row">
+		<div class="col-md-6 col-lg-12">
+			<div id='map' style='height: 80vh;'></div>
+		</div>
+		
+				
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+				<div id='description_holder'style='height: 30vh;' ></div>
+		</div>
+
+		
+		
+	</div>
+	
+</div>
+
+
+	<script>
+
+		var boundsArray2 = [];
+		   boundsArray2.push([50.18717, -120.18619]);
+		   boundsArray2.push([32.42930, -111.56158]);
+    </script>
+ 
+
+		{% include "leaflet_US_setup_cookie_alt.html" %}
+
+    
+    <script>
+		{% for ceded_land in ceded_lands %}
+			var randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+			var cededLand_{{ceded_land.pk}} = {{ceded_land.multi_polygon.geojson | safe}}
+			L.geoJSON(cededLand_{{ceded_land.pk}},  {
+				fillColor: randomColor,
+				color: "#000",
+				opacity: 1,
+				fillOpacity: 0.6
+			}).addTo(map).on('click', function(e){					
+					window.open("{% url 'tribal_ceded_land_cessnum' ceded_land.CESSNUM %}", "_self");
+				});
+			
+			var feat_marker_{{ceded_land.pk}} = L.marker([{{ceded_land.multi_polygon.centroid.y}}, {{ceded_land.multi_polygon.centroid.x}}]).on('click', function(d){	
+				did = document.getElementById('description_holder');
+		insertHTML = "<p>" + "{{ceded_land.annual_report_text}}" + "</p>" + "<p>" + "{{ceded_land.annual_report_historic_remarks}}" + "</p>" + 
+		"<p>test</p>" +
+		"<p> {{ ceded_land.SCHDTRB}} </p>" +
+ "<li> cessnum  : {{ ceded_land.CESSNUM }} </li>"  +  
+ "<li> cessnumsort  : {{ ceded_land.CESSNUMSORT }} </li>"  +  
+ "<li> mapname  : {{ ceded_land.MAPNAME }} </li>"  +  
+ "<li> state  : {{ ceded_land.STATE }} </li>"  +  
+ "<li> county  : {{ ceded_land.COUNTY }} </li>"  +  
+ "<li> statecounty  : {{ ceded_land.STATECOUNTY }} </li>"  +  
+ "<li> schdtrb  : {{ ceded_land.SCHDTRB }} </li>"  +  
+ "<li> presdaytrb  : {{ ceded_land.PRESDAYTRB }} </li>"  +  
+ "<li> citation1  : {{ ceded_land.CITATION1 }} </li>"  +  
+ "<li> citation2  : {{ ceded_land.CITATION2 }} </li>"  +  
+ "<li> cessdate1  : {{ ceded_land.CESSDATE1 }} </li>"  +  
+ "<li> date1link_royce_schedule  : <a href = '{{ ceded_land.DATE1LINK_ROYCE_SCHEDULE }}'>{{ ceded_land.DATE1LINK_ROYCE_SCHEDULE }}</a> </li>"  +  
+ "<li> date1link_kappler_treaty  : <a href = '{{ ceded_land.DATE1LINK_KAPPLER_TREATY }}'>{{ ceded_land.DATE1LINK_KAPPLER_TREATY }}</a> </li>"  +  
+ "<li> cessdate2  : {{ ceded_land.CESSDATE2 }} </li>"  +  
+ "<li> date2link_royce_schedule  : <a href = '{{ ceded_land.DATE2LINK_ROYCE_SCHEDULE }}'>{{ ceded_land.DATE2LINK_ROYCE_SCHEDULE }}</a> </li>"  +  
+ "<li> date2link_kappler_treaty  : <a href = '{{ ceded_land.DATE2LINK_KAPPLER_TREATY }}'>{{ ceded_land.DATE2LINK_KAPPLER_TREATY }}</a> </li>"  +  
+ "<li> cessdate3  : {{ ceded_land.CESSDATE3 }} </li>"  +  
+ "<li> date3link_royce_schedule  : <a href = '{{ ceded_land.DATE3LINK_ROYCE_SCHEDULE }}'>{{ ceded_land.DATE3LINK_ROYCE_SCHEDULE }}</a> </li>"  +  
+ "<li> date3link_kappler_treaty  : <a href = '{{ ceded_land.DATE3LINK_KAPPLER_TREATY }}'>{{ ceded_land.DATE3LINK_KAPPLER_TREATY }}</a> </li>"  +  
+ "<li> cessdate4  : {{ ceded_land.CESSDATE4 }} </li>"  +  
+ "<li> date4link_royce_schedule  : {{ ceded_land.DATE4LINK_ROYCE_SCHEDULE }} </li>"  +  
+ "<li> date4link_kappler_treaty  : {{ ceded_land.DATE4LINK_KAPPLER_TREATY }} </li>"  +  
+ "<li> cessdate5  : {{ ceded_land.CESSDATE5 }} </li>"  +  
+ "<li> date5link_royce_schedule  : {{ ceded_land.DATE5LINK_ROYCE_SCHEDULE }} </li>"  +  
+ "<li> date5link_kappler_treaty  : {{ ceded_land.DATE5LINK_KAPPLER_TREATY }} </li>"  +  
+ "<li> mapname1  : {{ ceded_land.MAPNAME1 }} </li>"  +  
+ "<li> mapname2  : {{ ceded_land.MAPNAME2 }} </li>"  +  
+ "<li> mapname3  : {{ ceded_land.MAPNAME3 }} </li>"  +  
+ "<li> mapname4  : {{ ceded_land.MAPNAME4 }} </li>"  +  
+ "<li> mapname5  : {{ ceded_land.MAPNAME5 }} </li>"  +  
+ "<li> mapname6  : {{ ceded_land.MAPNAME6 }} </li>"  +  
+ "<li> mapurl1  : <a href = '{{ ceded_land.MAPURL1 }}'>{{ ceded_land.MAPURL1 }}</a> </li>"  +  
+ "<li> mapurl2  : <a href = '{{ ceded_land.MAPURL2 }}'>{{ ceded_land.MAPURL2 }}</a> </li>"  +  
+ "<li> mapurl3  : {{ ceded_land.MAPURL3 }} </li>"  +  
+ "<li> mapurl4  : {{ ceded_land.MAPURL4 }} </li>"  +  
+ "<li> mapurl5  : {{ ceded_land.MAPURL5 }} </li>"  +  
+ "<li> mapurl6  : {{ ceded_land.MAPURL6 }} </li>"  +  
+ "<li> link_federal_statute  : {{ ceded_land.LINK_FEDERAL_STATUTE }} </li>"  +  
+ "<li> link_executive_order  : <a href = '{{ ceded_land.LINK_EXECUTIVE_ORDER }}'>{{ ceded_land.LINK_EXECUTIVE_ORDER }}</a> </li>"  +  
+ "<li> link_other_treaty  : {{ ceded_land.LINK_OTHER_TREATY }} </li>"  +  
+ "<li> annual_report_text  : {{ ceded_land.annual_report_text }} </li>"  +  
+ "<li> annual_report_historic_remarks  : {{ ceded_land.annual_report_historic_remarks }} </li>"  ;
+		did.innerHTML = insertHTML;				
+					
+				});
+			feat_marker_{{ceded_land.pk}}.addTo(map);
+		{% endfor %}
+
+		
+    </script>
+
+    
+{% endblock %}

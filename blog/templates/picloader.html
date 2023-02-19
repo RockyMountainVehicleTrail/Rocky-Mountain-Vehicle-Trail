@@ -1,0 +1,20 @@
+      {% load static %}
+
+      
+      <script>
+		var markers = L.markerClusterGroup();
+		var pic_icon = L.icon({iconUrl: "{% static 'img/local_see-24px.svg' %}", iconSize: [30, 30],})		
+
+		{% for pic in pics %}
+			var  pic_marker_{{pic.pk}} =  L.marker( [{{pic.point.y}}, {{pic.point.x}}],   {icon: pic_icon}).on('click', function(e) {
+				pic_html = '<img  class="img-fluid" height="auto"  src="{{pic.small_picture.url}}"     alt="treeline_test" />	';
+				pic_id_text = 'picture id = {{pic.pk}}';
+				document.getElementById('picture_holder').innerHTML = pic_html;
+			});
+			markers.addLayer(pic_marker_{{pic.pk}})
+			
+			
+		{% endfor %}
+		map.addLayer(markers);
+		
+	</script>

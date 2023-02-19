@@ -1,0 +1,92 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}Scenic Drives {{state.name_en}}{% endblock %}
+ 
+{% block head %} 
+
+	{% include "cluster_head.html" %}
+{% endblock head%} 
+
+
+
+{% block content %}
+
+<div id='cookie_div'></div>
+
+	<div class="row">
+		<div class="col-md-6 col-lg-12">
+			<div id='map' style='height: 80vh;'></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<div id='main_text' >
+			<div>
+				<h2>Scenic Drives in {{state.name_en}}</h2>
+				<ul>
+				
+				{% for drive in drives %}
+					<li>
+						<h1>Best Scenic Drives in {{state.name_en}} <a href = "{% url 'scenic_drive_name' drive.url_title %}"> {{drive.title}}</a></h1>
+						{{drive.description | safe}}
+					</li>
+				{% endfor %}
+				</ul>
+			</div>
+		</div>	
+		
+	</div>
+		
+	
+    <script>
+		var state_geo = {{state.multi_polygon.envelope.geojson|safe}};
+		var boundsArray2 = []
+		for(var i=0; i < state_geo['coordinates'][0].length; i++){
+			boundsArray2.push([ state_geo['coordinates'][0][i][1],state_geo['coordinates'][0][i][0] ]);
+		}
+    </script>
+
+ 
+    {% include "leaflet_US_setup_cookie_alt.html" %}
+
+    
+{% include "feature_loader.html" %}
+    
+    <script>
+    {% for trail in drives %}
+     	{% if trail.reduced_multi_line_string.geojson %}
+			var vtrail_{{trail.pk}} = {
+				"type": "FeatureCollection",
+				"features": [
+					{
+						"type": "Feature",
+						"geometry": {{trail.reduced_multi_line_string.geojson | safe}},
+						"id": {{trail.pk}}
+					}				
+			]};
+			var vt_{{trail.pk}} = L.geoJSON(vtrail_{{trail.pk}} ).addTo(map);
+			vt_{{trail.pk}}.on('click', function(d){					
+				window.open("{% url 'scenic_drive_name' trail.url_title %}", "_self");
+			});
+			
+		var sd_start_icon_{{trail.pk}} = L.icon({iconUrl: "{% static 'img/directions_car-24px.svg' %}", iconSize: [30, 30],})
+		var  drive_svg_marker_{{trail.pk}} =  L.marker( [{{trail.multi_line_string.centroid.y}}, {{trail.multi_line_string.centroid.x}}],   {icon: sd_start_icon_{{trail.pk}} });
+		
+		drive_svg_marker_{{trail.pk}}.on('click', function(d){
+			window.open("{% url 'scenic_drive_name' trail.url_title %}", "_self");
+		});
+		drive_svg_marker_{{trail.pk}}.addTo(map);
+			
+		{% endif %}
+	{% endfor %}
+    
+    </script>
+    
+
+
+{% endblock %}

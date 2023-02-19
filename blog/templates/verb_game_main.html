@@ -1,0 +1,32 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}Learn a Latin{% endblock %}
+ 
+{% block head %} 
+{% endblock head%} 
+
+
+
+{% block content %}
+<ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+{% for page in pages %}
+
+          
+            <li class="nav-item active">
+				<a href="/latin/{{page.url_title}}_1.html">{{page.title}}</a> 
+			</li>
+			
+{% endfor %}
+    </ul>
+    {% for verb in verb_list %}
+		<a href="/verb_game/{{verb}}.html">{{verb}}</a>
+	{% endfor %}
+    <div>
+    
+    </div>
+{% endblock %}

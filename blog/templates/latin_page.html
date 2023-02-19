@@ -1,0 +1,123 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}Learn a Language{% endblock %}
+ 
+
+{% block head %} 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	 <link href='/static/css/spanish.css' rel="stylesheet">
+
+{% endblock head%}
+
+
+
+
+
+
+{% block content %}
+        
+<div id="defdiv" class="def-div" ><h1>Click on a word for the translation.</h1></div>
+<div class="container" id="clicker">
+	
+	{% for part in parts %}
+		<a href="{% url 'latin_page' part.language_page.url_title part.chapter %}">{{part.chapter}}</a>
+	{% endfor %}
+	
+	{% for line in lines %}
+	
+	<div class="line-group">
+				
+		<div class="lines">{{ line.english }}</div>
+		<div class="lines">{{ line.latin }}</div>
+
+	</div>
+	
+	{% endfor %}
+</div>
+
+<script>
+	function getWord(text, index){
+		var re = new RegExp('[a-zA-Zñéíúóá]');
+		if (re.test(text[index])) {
+			var len = text.length;
+			var start = index;
+			while ((start >= 0) && re.test(text[start])){
+				start = start - 1;
+			}
+			var finish = index;
+			while ((finish < len) && re.test(text[finish])){
+				finish = finish + 1;
+			}
+			return(text.slice(start+1, finish))
+		} else {
+			return 0;
+		};
+	};
+</script>
+
+<script>
+	var scrap_morph;
+	function make_output(morph){
+		var output = "<h1>";
+		for (var i=0; i < morph.length; i++){
+			output = output + "<details>";
+			output = output + "<summary>" + morph[i]["word"] + "</summary>";
+			
+			output = output + morph[i]["full_def"];
+			output = output + "<ol>";
+			for (var m=0; m < morph[i]["morphs"].length; m++){
+				output = output + "<li>" + morph[i]["morphs"][m] +"</li>";
+			}
+			output = output + "</ol>"
+			output = output + "</details>"
+		}
+		output = output + "</h1>"
+		document.getElementById('defdiv').innerHTML = output;
+	};
+</script>
+
+
+
+
+<script>
+	var spanish_dict = {{json_dict | safe }};
+	
+	$( "#clicker" ).click(function(x) {
+		so = window.getSelection();
+		cword = getWord(x.target.innerText, so.anchorOffset);
+		console.log(cword);
+		console.log(spanish_dict[cword.toLocaleLowerCase()]);
+		scrap_morph = spanish_dict[cword.toLocaleLowerCase()]
+		make_output(spanish_dict[cword.toLocaleLowerCase()]);
+	});
+
+</script>
+
+<script>
+	d = $('#defdiv')
+	var dd;
+$( window  ).scroll(function(x) {
+	dd = x;
+	if (window.scrollY > 50){
+		$('#defdiv').removeClass('def-div');
+		$('#defdiv').addClass('def-div-scroll');
+	}
+	if (window.scrollY < 50){
+		$('#defdiv').removeClass('def-div-scroll');
+		$('#defdiv').addClass('def-div');
+	}
+	
+	
+	});
+
+</script>
+
+
+{% endblock content %}
+

@@ -1,0 +1,16 @@
+    <script>
+		var feat_pin_markers_group = L.markerClusterGroup();
+		var feat_markers_group = L.markerClusterGroup();
+		console.log('featload');
+		{% for feature in features %}
+			var icon_{{feature.pk}} = L.divIcon({html:'{{feature.get_name}}', className: 'leaflet_div', iconSize: [0, 0], 'iconAnchor': [22,0]});
+			var feat_marker_{{feature.pk}} = L.marker( [{{feature.point.y}}, {{feature.point.x}}], {icon: icon_{{feature.pk}} }).bindPopup("{{feature.description | safe}}")
+			
+			var feat_pin_marker_{{feature.pk}} = L.marker([{{feature.point.y}}, {{feature.point.x}}]).bindPopup("{{feature.description | safe}}")
+			
+			feat_markers_group.addLayer(feat_marker_{{feature.pk}});
+			feat_pin_markers_group.addLayer(feat_pin_marker_{{feature.pk}});
+		{% endfor %}
+		map.addLayer(feat_markers_group);
+		map.addLayer(feat_pin_markers_group);
+    </script>

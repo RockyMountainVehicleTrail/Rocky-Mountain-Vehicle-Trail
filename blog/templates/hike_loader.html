@@ -1,0 +1,51 @@
+ {% load static %}
+ <script>
+	 
+ 		var hike_marker_group = L.markerClusterGroup();
+ 		var hike_head_marker_group = L.markerClusterGroup();
+
+		var myStyle = {
+			"color": "#ff7800",
+			  "weight": 5
+		}
+		
+		{% for trail in trails %}
+			var vtrail_{{trail.pk}} = {
+				"type": "FeatureCollection",
+				"features": [
+					{
+						"type": "Feature",
+						"geometry": {{trail.reduced_line_string.geojson | safe}},
+						"id": {{trail.pk}}
+					}
+			]};
+			var vt_{{trail.pk}} = L.geoJSON(vtrail_{{trail.pk}}, {style:myStyle} ).addTo(map);
+			vt_{{trail.pk}}.on('click', function(d){
+				window.open("{% url 'trail_name' trail.url_title %}", "_self");
+			});
+			
+			var icon_{{trail.pk}} = L.divIcon({html:'{{trail.title}}', className: 'leaflet_div', iconUrl: "{% static 'img/baseline_directions_walk_black_18dp.png' %}", iconSize: [0, 0]});
+			var feat_marker_{{trail.pk}} = L.marker( [ vtrail_{{trail.pk}}["features"][0]["geometry"]["coordinates"][0][1], vtrail_{{trail.pk}}["features"][0]["geometry"]["coordinates"][0][0] ],   {icon: icon_{{trail.pk}} })
+			
+			feat_marker_{{trail.pk}}.on('click', function(d){
+				window.open("{% url 'trail_name' trail.url_title %}", "_self");
+			});
+			
+			var start_icon_{{trail.pk}} = L.icon({iconUrl: "{% static 'img/directions_walk-24px.svg' %}", iconSize: [30, 30],})
+			
+
+			
+			var  hike_svg_marker_{{trail.pk}} =  L.marker( [ vtrail_{{trail.pk}}["features"][0]["geometry"]["coordinates"][0][1], vtrail_{{trail.pk}}["features"][0]["geometry"]["coordinates"][0][0] ],   {icon: start_icon_{{trail.pk}} });
+			
+			hike_svg_marker_{{trail.pk}}.on('click', function(d){
+				window.open("{% url 'trail_name' trail.url_title %}", "_self");
+			});
+			
+			hike_marker_group.addLayer(feat_marker_{{trail.pk}});
+			hike_head_marker_group.addLayer(hike_svg_marker_{{trail.pk}});
+			
+		{% endfor %}
+		
+		map.addLayer(hike_marker_group);
+		map.addLayer(hike_head_marker_group);
+    </script>
